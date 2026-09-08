@@ -1,0 +1,8 @@
+-- این فایل تنها برای مرجع نگه داشته شده است.
+-- منبع اصلی ساختار پایگاه داده اکنون پوشه‌ی migrations است:
+--
+--   database/migrations/001_initial_schema.sql       ساختار پایه (۲۸ جدول)
+--   database/migrations/002_workflow_and_centers.sql  گردش کار، مراکز هزینه و تکمیل دوره‌ها
+--
+-- اجرا:  DATABASE_URL=postgres://... npm run migrate
+-- شبیه‌ساز (بدون پایگاه):  npm run migrate

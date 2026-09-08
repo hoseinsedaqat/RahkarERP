@@ -1,0 +1,35 @@
+# اجرای کاملِ «راهکار» با یک دستور: docker compose up -d
+services:
+  app:
+    build: .
+    image: aria-erp:latest
+    container_name: aria-erp
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      # کلیدِ امضای توکن؛ حتماً یک مقدار تصادفی و بلند بگذارید
+      JWT_SECRET: ${JWT_SECRET:-please-change-this-secret-to-something-long}
+      # در صورت نیاز به دیتابیسِ PostgreSQL، مقدار زیر را تنظیم کنید
+      # DATABASE_URL: postgres://postgres:postgres@db:5432/aria
+      # مبدأهای مجاز برای CORS (با ویرگول جدا شوند)
+      CORS_ORIGIN: ${CORS_ORIGIN:-}
+    volumes:
+      - aria-data:/app/.data
+
+  # در صورت تمایل به PostgreSQL، بخش زیر را فعال کنید
+  # db:
+  #   image: postgres:16-alpine
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: aria
+  #   volumes:
+  #     - aria-db:/var/lib/postgresql/data
+
+volumes:
+  aria-data:
+  # aria-db:

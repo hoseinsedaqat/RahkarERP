@@ -1,0 +1,26 @@
+{
+  "name": "راهکار | سیستم یکپارچه برنامه‌ریزی سازمان",
+  "short_name": "راهکار",
+  "description": "سامانه یکپارچه مدیریت عملیات، مالی و منابع سازمان",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7f6",
+  "theme_color": "#0f5f6c",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
