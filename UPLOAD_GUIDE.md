@@ -1,67 +1,121 @@
-# راهنمای آپلود (بدون نیاز به گیت یا ترمینال)
+<div dir="rtl">
 
-سه بسته آماده شده است؛ هر کدام را که می‌خواهی انتخاب کن:
+# راهنمای انتشار و آپلود «راهکار»
 
-| فایل | حجم | برای چه کاری |
-| --- | --- | --- |
-| `arenaai-site.zip` | ۳۹ KB | فقط برای **بالا آوردن سایت** (۳ فایل آماده) |
-| `arenaai-changes-only.zip` | ۱۱۰ KB | فقط **فایل‌هایی که تغییر کرده‌اند** |
+این راهنما سه سناریوی رایج را پوشش می‌دهد: انتشار نسخه‌ی نمایشی روی **Netlify**،
+انتشار کد روی **GitHub** و ساخت **بسته‌ی نصبی ویندوز**.
 
----
-
-## روش ۱ — بالا آوردن سایت در ۳ دقیقه (ساده‌ترین راه)
-
-۱. فایل **`arenaai-site.zip`** را دانلود و در جایی Extract کن (۳ فایل می‌بینی: `index.html` و پوشه‌ی `assets` و فایل `.nojekyll`)
-۲. در مرورگر برو به مخزن: **https://github.com/h03einsedaqat/arenaai**
-۳. مطمئن شو شاخه روی **main** است → وارد پوشه‌ی **`docs`** شو
-۴. دکمه‌ی **Add file ▸ Upload files** را بزن
-۵. سه فایلِ استخراج‌شده را با ماوس **بکش داخل صفحه** (drag & drop)
-6. پایین صفحه **Commit changes** را بزن
-7. برو به **Settings → Pages → Build and deployment**:
-   - Source: **Deploy from a branch**
-   - Branch: **main** و Folder: **`/docs`** → Save
-8. یک تا دو دقیقه صبر کن، بعد این آدرس را باز کن:
-   🌐 **https://h03einsedaqat.github.io/arenaai/**
-
-> این روش فقط سایت را بالا می‌آورد و نیازی به Pull Request ندارد.
+> 📖 توضیح کامل پروژه، ماژول‌ها و روش‌های نصب در [`README.md`](README.md) آمده است.
 
 ---
 
-## روش ۲ — آپلود کل تغییرات پروژه (برای ادامه کار)
+## روش ۱ — انتشار نسخه‌ی نمایشی روی Netlify (ساده‌ترین راه)
 
-۱. فایل **`arenaai-changes-only.zip`** را دانلود و Extract کن
-۲. در صفحه‌ی اصلی مخزن (ریشه، روی شاخه main) دکمه‌ی **Add file ▸ Upload files** را بزن
-۳. **همه فایل‌ها و پوشه‌های استخراج‌شده** را بکش داخل صفحه
-   (اگر پوشه‌ای هم‌نام وجود داشت، گیت‌هاب خودکار ادغام می‌کند)
-۴. **Commit changes**
+نسخه‌ی نمایشی، خروجیِ **بدون سرور** است؛ داده‌ها فقط در مرورگرِ بازدیدکننده می‌مانند.
 
----
+### الف) با رابط Netlify (بدون خط فرمان)
 
-## روش ۳ — می‌خواهی Pull Request داشته باشی (بدون ترمینال)
-
-۱. بالای صفحه‌ی مخزن، روی منوی شاخه (که نوشته **main**) بزن → **View all branches** → **New branch**
-۲. نام شاخه را بگذار: `web-version` و از روی `main` بساز
-۳. داخل همان شاخه، مثل روش ۲ فایل‌ها را آپلود کن و Commit بزن
-۴. بالای صفحه گزینه‌ی **Compare & pull request** ظاهر می‌شود → آن را بزن
-۵. عنوان را بگذار: «نسخه وب: داشبورد پویا، لندینگ جدید و انتشار روی GitHub Pages»
-   و متن فایل **`PR.md`** را در قسمت توضیحات بچسبان
-۶. **Create pull request** → بعد **Merge pull request** → سپس مراحل Pages از روش ۱
-
----
-
-## بعد از آپلود (اگر روی سیستم خودت می‌خواهی اجرا کنی)
+۱. خروجی را بسازید:
 
 ```bash
 npm install
-npm run dev      # سپس http://localhost:5173
+npm run build:demo        # خروجی در پوشه‌ی dist (شامل .nojekyll و 404.html)
 ```
 
-ورود: نام کاربری `admin` · رمز عبور `admin123`
+۲. به [app.netlify.com/drop](https://app.netlify.com/drop) بروید و پوشه‌ی `dist` را داخل صفحه بکشید.
+۳. Netlify یک نشانی می‌سازد؛ از `Site configuration → Change site name` نام دلخواه بگذارید.
+
+### ب) با اتصال به مخزن GitHub (انتشار خودکار)
+
+۱. در Netlify یک سایت جدید از مخزن بسازید و این تنظیمات را وارد کنید:
+
+| تنظیم | مقدار |
+| --- | --- |
+| Build command | `npm run build:demo` |
+| Publish directory | `dist` |
+| Node version | `20` یا `22` (در `Environment variables`) |
+
+۲. با هر push روی شاخه‌ی مقصد، سایت به‌طور خودکار دوباره ساخته و منتشر می‌شود.
+
+🌐 نسخه‌ی نمایشیِ فعلی: **https://rahkar-erp.netlify.app**
+
+کاربرانِ نمایشی: `admin / admin123` · `hesabdari / 1234` · `foroosh / 1234` · `anbar / 1234`
+
+### ج) تست محلیِ همان نسخه
+
+```bash
+npm run build:demo:local                     # خروجی در dist-demo
+node scripts/serve-static.mjs dist-demo 8081 # سپس http://localhost:8081
+```
+
+---
+
+## روش ۲ — انتشار کد روی GitHub
+
+```bash
+git clone https://github.com/h03einsedaqat/erpv2.git
+cd erpv2
+
+git checkout -b my-feature        # شاخه‌ی کاری خودتان
+# … تغییرات …
+npm run typecheck && npm test     # بررسی‌ها سبز باشند
+git add -A
+git commit -m "توضیح تغییر"
+git push origin my-feature        # سپس روی GitHub Pull Request بسازید
+```
+
+اسکریپت یک‌دستگری هم وجود دارد (کامیت + push + ساخت PR با `gh`):
+
+```bash
+BRANCH=نام-شاخه BASE=main bash scripts/publish.sh
+```
+
+---
+
+## روش ۳ — بسته‌ی نصبی ویندوز (برای مشتری بدون گیت)
+
+```bash
+npm run build
+npm run package:win        # خروجی: dist-win/راهکار/
+```
+
+پوشه‌ی `dist-win/راهکار` را زیپ کنید و در اختیار کاربر بگذارید.
+روی رایانه‌ی مقصد فقط **Node.js نسخه‌ی ۲۰.۱۹ به بالا** لازم است؛ کاربر کافی است
+روی `راه‌اندازی.bat` دوبار کلیک کند تا وابستگی‌ها نصب و برنامه اجرا شود.
+
+---
+
+## روش ۴ — اجرای واقعی روی سرور (چندنفره)
+
+نسخه‌ی نمایشی سرور ندارد؛ برای استفاده‌ی واقعیِ تیم، برنامه را روی سرور اجرا کنید:
+
+```bash
+git clone https://github.com/h03einsedaqat/erpv2.git
+cd erpv2
+npm install
+cp .env.example .env       # سپس PORT، JWT_SECRET و CORS_ORIGIN را تنظیم کنید
+npm start                  # http://localhost:8080
+```
+
+یا با داکر:
+
+```bash
+docker compose up -d
+```
+
+برای اجرای دائمی با systemd، پشت پروکسی HTTPS و اتصال PostgreSQL به
+[`docs/راهنما-نصب.md`](docs/راهنما-نصب.md) مراجعه کنید.
 
 ---
 
 ## اگر چیزی کار نکرد
 
-- سایت هنوز بالا نمی‌آید؟ یک بار دیگر **Settings → Pages** را چک کن که Folder روی `/docs` و Branch روی `main` باشد، و ۲ دقیقه صبر کن.
-- صفحه سفید است؟ مطمئن شو هر ۳ فایل (`index.html`، `assets/index-*.js`، `assets/index-*.css`) در پوشه `docs` روی شاخه main هستند.
-- خطای ۴۰۴؟ معمولاً یعنی Pages هنوز فعال نشده یا پوشه اشتباه انتخاب شده.
+| مشکل | راه‌حل |
+| --- | --- |
+| سایت بالا نمی‌آید | مطمئن شوید Publish directory روی `dist` است و Build command دقیقاً `npm run build:demo` |
+| صفحه سفید است | کش مرورگر را خالی کنید؛ فایل `assets/index-*.js` باید کنار `index.html` در `dist` باشد |
+| خطای ۴۰۴ در نشانی‌های داخلی | فایل `404.html` باید در خروجی باشد (اسکریپت `prepare-pages` آن را می‌سازد) |
+| `npm install` خطا می‌دهد | Node.js را به نسخه‌ی `20.19+` یا `22.12+` ارتقا دهید و `npm cache clean --force` بزنید |
+| پورت ۸۰۸۰ اشغال است | در `.env` مقدار `PORT` را عوض کنید |
+
+</div>

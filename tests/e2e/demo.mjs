@@ -32,7 +32,7 @@ async function bootDemo(username, password) {
   const virtualConsole = new VirtualConsole();
   const errors = [];
   virtualConsole.on('jsdomError', (error) => { if (!/Not implemented/.test(String(error.message))) errors.push(error.message); });
-  const dom = new JSDOM(html, { runScripts: 'dangerously', url: 'https://h03einsedaqat.github.io/arenaai/', pretendToBeVisual: true, virtualConsole });
+  const dom = new JSDOM(html, { runScripts: 'dangerously', url: 'https://rahkar-erp.netlify.app/', pretendToBeVisual: true, virtualConsole });
   const { window } = dom;
   let networkCalls = 0;
   window.fetch = () => { networkCalls += 1; return Promise.reject(new Error('بدون شبکه')); };

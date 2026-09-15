@@ -5,7 +5,7 @@
 #   bash scripts/publish.sh
 #
 # متغیرهای قابل تنظیم (اختیاری):
-#   BRANCH=arena/01a05d72-arenaai   شاخه مبدأ
+#   BRANCH=arena/01a09028-erpv2    شاخه مبدأ
 #   BASE=main                       شاخه مقصد
 #
 # نکته: اگر تاریخچه‌ی محلی با remote تفاوت کرده باشد، اسکریپت با reset --soft
@@ -14,9 +14,9 @@
 #
 set -uo pipefail
 
-BRANCH="${BRANCH:-arena/01a05d72-arenaai}"
+BRANCH="${BRANCH:-arena/01a09028-erpv2}"
 BASE="${BASE:-main}"
-TITLE="نسخه وب: داشبورد پویا، لندینگ جدید و انتشار روی GitHub Pages"
+TITLE="به‌روزرسانی راهکار: مستندات، ماژول‌ها و نسخه‌ی نمایشی روی Netlify"
 
 cd "$(dirname "$0")/.." || exit 1
 
@@ -45,10 +45,10 @@ if command -v gh >/dev/null 2>&1; then
     echo "✅ Pull Request ساخته شد."
   else
     echo "⚠️  ساخت PR ناموفق بود یا از قبل وجود دارد. آدرس را اینجا ببینید:"
-    echo "    https://github.com/h03einsedaqat/arenaai/compare/$BASE...$BRANCH"
+    echo "    https://github.com/h03einsedaqat/erpv2/compare/$BASE...$BRANCH"
   fi
 else
   echo "برای ساخت PR این آدرس را باز کنید:"
-  echo "    https://github.com/h03einsedaqat/arenaai/compare/$BASE...$BRANCH?expand=1"
+  echo "    https://github.com/h03einsedaqat/erpv2/compare/$BASE...$BRANCH?expand=1"
   echo "و متن فایل PR.md را در توضیحات قرار دهید."
 fi

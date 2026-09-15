@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 
 /**
  * پایه‌ی مسیرها به‌صورت پیش‌فرض نسبی است تا خروجی روی هر مسیری
- * (ریشه دامنه یا زیرمسیر مثل username.github.io/arenaai) بدون تغییر کار کند.
+ * (ریشه دامنه یا زیرمسیر مثل example.com/erp) بدون تغییر کار کند.
  * برای استقرار روی مسیر ثابت، BASE_PATH را تنظیم کنید.
  */
 const base = process.env.BASE_PATH ?? './';
