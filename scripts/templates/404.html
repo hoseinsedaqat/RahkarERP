@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>صفحه پیدا نشد (۴۰۴) | راهکار</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#0f5f6c" />
+    <meta name="color-scheme" content="light" />
+    <style id="not-found-fonts">
+      /* فونتِ وزیرمتن (همان فونتِ بقیه‌ی صفحه‌ها) هنگامِ آماده‌سازیِ انتشار
+         به‌صورت base64 همین‌جا جا می‌گیرد تا صفحه خودبسنده بماند. */
+      /*__VAZIRMATN_FACES__*/
+    </style>
+    <style>
+      /* صفحه‌ی ۴۰۴ برای میزبان‌های فایلِ ایستا (GitHub Pages، Netlify، Nginx و …)
+         کاملاً خودبسنده است: سبک و تصویر درونِ همین فایل‌اند تا در هر عمقی از
+         نشانی (مثلاً /repo/foo/bar) هم بدون مسیرِ نسبیِ شکسته نمایش داده شود. */
+      * { box-sizing: border-box; }
+      html, body { margin: 0; min-height: 100%; }
+      body {
+        font-family: 'Vazirmatn', 'IRANSans', Tahoma, sans-serif;
+        background: linear-gradient(180deg, #f3faf7 0%, #ffffff 55%, #eef8f4 100%);
+        color: #173b38;
+      }
+      .page { position: relative; display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; }
+      .aurora { position: fixed; inset: 0; z-index: 0; pointer-events: none; filter: blur(72px); opacity: .5; }
+      .aurora span { position: absolute; display: block; border-radius: 50%; }
+      .aurora span:nth-child(1) { width: 470px; height: 470px; right: -130px; top: -160px; background: radial-gradient(circle, #3ecfa0 0%, rgba(62,207,160,0) 70%); animation: float 19s ease-in-out infinite; }
+      .aurora span:nth-child(2) { width: 430px; height: 430px; left: -150px; top: 28%; background: radial-gradient(circle, #2f7dfd 0%, rgba(47,125,253,0) 70%); animation: float 19s ease-in-out -7s infinite; }
+      .aurora span:nth-child(3) { width: 390px; height: 390px; right: 14%; bottom: -160px; background: radial-gradient(circle, #e0a45c 0%, rgba(224,164,92,0) 70%); animation: float 19s ease-in-out -13s infinite; }
+      @keyframes float { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 33% { transform: translate3d(-30px, 25px, 0) scale(1.08); } 66% { transform: translate3d(25px, -20px, 0) scale(.95); } }
+      .page > *:not(.aurora) { position: relative; z-index: 1; }
+
+      .nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; width: 100%; max-width: 1180px; margin: 0 auto; padding: 20px clamp(18px, 5vw, 46px); }
+      .brand { display: inline-flex; align-items: center; gap: 10px; color: #173e39; font-size: 18px; font-weight: 850; text-decoration: none; }
+      .brand-mark { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 13px; background: linear-gradient(145deg, #126154, #259a7d); color: #fff; font-size: 23px; font-weight: 850; box-shadow: 0 10px 22px rgba(15, 107, 87, .22); }
+      .chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 15px; border: 1px solid rgba(23, 125, 103, .18); border-radius: 999px; background: rgba(255, 255, 255, .74); color: #51736b; font-size: 11px; font-weight: 700; box-shadow: 0 10px 22px rgba(15, 74, 63, .05); }
+      .chip i { font-style: normal; color: #c4782f; font-weight: 900; letter-spacing: .06em; }
+
+      .body { flex: 1; display: grid; grid-template-columns: minmax(0, 1.06fr) minmax(270px, .94fr); align-items: center; gap: clamp(22px, 4vw, 56px); width: 100%; max-width: 1180px; margin: 0 auto; padding: clamp(16px, 3vw, 34px) clamp(18px, 5vw, 46px) clamp(40px, 6vw, 74px); }
+      .eyebrow { margin: 0 0 10px; color: #167963; font-size: 11px; font-weight: 800; }
+      h1 { margin: 0 0 16px; color: #143e39; font-size: clamp(30px, 4.6vw, 52px); line-height: 1.22; letter-spacing: -.04em; }
+      .lead { max-width: 620px; margin: 0; color: #54716a; font-size: clamp(13.5px, 1.5vw, 16px); line-height: 2.05; }
+
+      .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 26px; }
+      .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 22px; border: 1px solid transparent; border-radius: 14px; font-family: inherit; font-size: 12.5px; font-weight: 700; text-decoration: none; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+      .button.primary { background: linear-gradient(135deg, #1b7f6e 0%, #0f5f6c 100%); color: #fff; box-shadow: 0 20px 38px rgba(19, 86, 80, .22); }
+      .button.primary:hover { transform: translateY(-2px); box-shadow: 0 24px 44px rgba(19, 86, 80, .26); }
+      .button.secondary { border-color: #dfe9e5; background: #fff; color: #173b3a; }
+      .button.secondary:hover { border-color: #16866d; color: #16866d; background: #e4f3ed; transform: translateY(-1px); }
+      .arrow { font-size: 15px; font-weight: 700; line-height: 1; }
+
+      .address { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 22px; padding: 11px 15px; border: 1px dashed rgba(23, 125, 103, .32); border-radius: 14px; background: rgba(255, 255, 255, .72); }
+      .address span { color: #6b8880; font-size: 10px; font-weight: 800; white-space: nowrap; }
+      .address code { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #1d5b52; font-family: inherit; font-size: 11px; direction: ltr; }
+
+      .shortcuts { margin-top: 24px; }
+      .shortcuts-title { display: block; margin-bottom: 10px; color: #6f8b84; font-size: 10.5px; font-weight: 700; }
+      .shortcuts-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+      .shortcut { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 0 13px; border: 1px solid #dbe9e4; border-radius: 12px; background: rgba(255, 255, 255, .88); color: #245148; font-size: 11px; font-weight: 700; text-decoration: none; box-shadow: 0 8px 18px rgba(15, 74, 63, .04); }
+      .shortcut span { color: #1c8a72; font-size: 14px; }
+      .shortcut:hover { border-color: #6fbca8; background: #f0faf6; color: #17705e; transform: translateY(-1px); }
+
+      .art { display: grid; place-items: center; }
+      .art svg { display: block; width: min(100%, 386px); height: auto; filter: drop-shadow(0 28px 46px rgba(15, 94, 80, .16)); animation: bob 7.5s ease-in-out infinite; }
+      @keyframes bob { 0%, 100% { transform: translate3d(0, 0, 0) rotate(-1.2deg); } 50% { transform: translate3d(0, -14px, 0) rotate(1.2deg); } }
+
+      .footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; width: 100%; max-width: 1180px; margin: 0 auto; padding: 16px clamp(18px, 5vw, 46px) 28px; border-top: 1px solid rgba(30, 99, 85, .12); color: #748c85; font-size: 10px; }
+
+      @media (max-width: 900px) {
+        .body { grid-template-columns: 1fr; text-align: center; }
+        .lead { margin-inline: auto; }
+        .actions, .shortcuts-grid, .address { justify-content: center; }
+        .art { order: -1; }
+        .art svg { width: min(78%, 290px); }
+        .footer { justify-content: center; text-align: center; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .aurora span, .art svg { animation: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+
+      <header class="nav">
+        <a class="brand" id="not-found-brand" href="./"><span class="brand-mark">ر</span><span>راهکار</span></a>
+        <span class="chip"><i>۴۰۴</i> صفحه پیدا نشد</span>
+      </header>
+
+      <section class="body">
+        <div class="copy">
+          <p class="eyebrow">خطای ۴۰۴ · نشانی ناشناس</p>
+          <h1>این صفحه در راهکار وجود ندارد</h1>
+          <p class="lead">نشانی‌ای که باز کردید پاک شده، جابه‌جا شده یا هیچ‌وقت وجود نداشته است. داده‌های شما سرِ جای خودشان محفوظ‌اند؛ با یک کلیک به همان‌جایی که بودید برمی‌گردید.</p>
+          <div class="actions">
+            <a class="button primary" id="not-found-back" href="./">بازگشت به صفحه‌ی قبل <b class="arrow" aria-hidden="true">→</b></a>
+            <a class="button secondary" id="not-found-home" href="./">صفحه‌ی اصلی</a>
+          </div>
+          <div class="address" role="status"><span>نشانیِ درخواستی</span><code id="not-found-address" dir="ltr"></code></div>
+          <div class="shortcuts">
+            <span class="shortcuts-title">شاید یکی از این‌ها کمکتان کند</span>
+            <div class="shortcuts-grid">
+              <a class="shortcut" id="not-found-login" href="./?login=1#login"><span>⌁</span>ورود به سامانه</a>
+              <a class="shortcut" id="not-found-guides" href="./"><span>▤</span>آشنایی با ماژول‌ها</a>
+            </div>
+          </div>
+        </div>
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 340 340">
+            <defs>
+              <linearGradient id="nf-shell" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#def5ec" /><stop offset="1" stop-color="#bce7d8" /></linearGradient>
+              <linearGradient id="nf-lens" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffdcb4" /><stop offset="1" stop-color="#e3a05c" /></linearGradient>
+            </defs>
+            <rect x="16" y="16" width="308" height="308" rx="104" fill="url(#nf-shell)" />
+            <rect x="84" y="62" width="142" height="180" rx="22" fill="#ffffff" stroke="#d2e9e0" stroke-width="2" />
+            <rect x="110" y="96" width="90" height="10" rx="5" fill="#e3f2ec" />
+            <rect x="110" y="122" width="62" height="10" rx="5" fill="#e3f2ec" />
+            <rect x="110" y="148" width="76" height="10" rx="5" fill="#e3f2ec" />
+            <rect x="110" y="174" width="48" height="10" rx="5" fill="#eef5f2" />
+            <rect x="110" y="200" width="70" height="10" rx="5" fill="#f6ead9" />
+            <circle cx="198" cy="206" r="64" fill="url(#nf-lens)" opacity=".95" />
+            <circle cx="198" cy="206" r="64" fill="none" stroke="#0f5f6c" stroke-width="10" />
+            <line x1="244" y1="252" x2="288" y2="296" stroke="#0f5f6c" stroke-width="18" stroke-linecap="round" />
+            <text x="198" y="230" text-anchor="middle" font-size="60" font-weight="800" fill="#ffffff" font-family="Vazirmatn, Tahoma, sans-serif">؟</text>
+            <circle cx="80" cy="272" r="9" fill="#e5ab62" />
+            <circle cx="276" cy="88" r="7" fill="#22957b" />
+            <circle cx="62" cy="120" r="5" fill="#8fcbb8" />
+          </svg>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span>راهکار · سیستم یکپارچه برنامه‌ریزی سازمان</span>
+        <span>کد خطا: ۴۰۴ — اگر این صفحه باید وجود داشته باشد، به مدیر سیستم اطلاع دهید.</span>
+      </footer>
+    </main>
+
+    <script>
+      /* این صفحه ممکن است در هر عمقی از نشانی سرو شود (مثلاً /repo/a/b)؛ پس ریشه‌ی
+         برنامه با آزمودنِ پوشه‌های والد پیدا می‌شود تا پیوندها همیشه درست باشند. */
+      (function () {
+        var back = document.getElementById('not-found-back');
+        var home = document.getElementById('not-found-home');
+        var login = document.getElementById('not-found-login');
+        var guides = document.getElementById('not-found-guides');
+        var modules = document.getElementById('not-found-brand');
+        var address = document.getElementById('not-found-address');
+        if (address) address.textContent = location.href;
+
+        function apply(root) {
+          [back, home, guides, modules].forEach(function (node) { if (node) node.setAttribute('href', root); });
+          if (login) login.setAttribute('href', root + '?login=1#login');
+        }
+
+        if (back) back.addEventListener('click', function (event) {
+          event.preventDefault();
+          // اگر در این نشست صفحه‌ی دیگری باز شده باشد، همان «بازگشت» واقعی است
+          if (window.history.length > 1) { window.history.back(); return; }
+          location.href = back.getAttribute('href') || './';
+        });
+
+        var segments = location.pathname.split('/').filter(Boolean);
+        var depth = 0;
+        var maxDepth = Math.min(segments.length, 4);
+        function probe() {
+          if (typeof fetch !== 'function' || depth > maxDepth) return;
+          var prefix = '/' + segments.slice(0, segments.length - depth).join('/');
+          var candidate = prefix === '/' ? '/' : prefix + '/';
+          fetch(candidate + 'index.html', { method: 'HEAD', cache: 'no-store' })
+            .then(function (response) {
+              if (response && response.ok) { apply(candidate); return; }
+              depth += 1;
+              probe();
+            })
+            .catch(function () { /* بدون شبکه، پیوندهای پیش‌فرض کافی‌اند */ });
+        }
+        probe();
+      })();
+    </script>
+  </body>
+</html>

@@ -2350,3 +2350,71 @@ button:active { transform: translateY(1px); }
   .main-content table,
   .record-modal table { display: table; overflow: visible; }
 }
+
+/* ============================================================
+   صفحه‌ی «پیدا نشد» (۴۰۴)
+   ------------------------------------------------------------
+   اگر کاربر نشانی‌ای را باز کند که در برنامه وجود ندارد، این صفحه
+   نمایش داده می‌شود؛ با دکمه‌ی بازگشت به صفحه‌ی قبل، میان‌برهای مفید
+   و نشانیِ درخواستی. طرح آن هم‌خانواده‌ی صفحه‌ی راهنمای ماژول است.
+   ============================================================ */
+.not-found-page { position: relative; display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; background: linear-gradient(180deg, #f3faf7 0%, #ffffff 55%, #eef8f4 100%); color: #173b38; }
+.not-found-aurora { position: fixed; inset: 0; z-index: 0; pointer-events: none; filter: blur(72px); opacity: .5; }
+.not-found-aurora span { position: absolute; display: block; border-radius: 50%; animation: float-blob 19s ease-in-out infinite; }
+.not-found-aurora span:nth-child(1) { width: 470px; height: 470px; right: -130px; top: -160px; background: radial-gradient(circle, #3ecfa0 0%, rgba(62,207,160,0) 70%); }
+.not-found-aurora span:nth-child(2) { width: 430px; height: 430px; left: -150px; top: 28%; background: radial-gradient(circle, #2f7dfd 0%, rgba(47,125,253,0) 70%); animation-delay: -7s; }
+.not-found-aurora span:nth-child(3) { width: 390px; height: 390px; right: 14%; bottom: -160px; background: radial-gradient(circle, #e0a45c 0%, rgba(224,164,92,0) 70%); animation-delay: -13s; }
+.not-found-page > *:not(.not-found-aurora) { position: relative; z-index: 1; }
+
+.not-found-nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; width: 100%; max-width: 1180px; margin: 0 auto; padding: 20px clamp(18px, 5vw, 46px); }
+.not-found-nav .guide-brand { display: inline-flex; align-items: center; gap: 10px; padding: 0; border: 0; background: transparent; color: #173e39; font-size: 18px; font-weight: 850; }
+.not-found-nav .brand-mark { display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 13px; background: linear-gradient(145deg, #126154, #259a7d); color: #fff; font-size: 23px; font-weight: 850; box-shadow: 0 10px 22px rgba(15, 107, 87, .22); }
+.not-found-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 15px; border: 1px solid rgba(23, 125, 103, .18); border-radius: 999px; background: rgba(255, 255, 255, .74); color: #51736b; font-size: 11px; font-weight: 700; box-shadow: 0 10px 22px rgba(15, 74, 63, .05); }
+.not-found-chip i { font-style: normal; color: #c4782f; font-weight: 900; letter-spacing: .06em; }
+
+.not-found-body { flex: 1; display: grid; grid-template-columns: minmax(0, 1.06fr) minmax(270px, .94fr); align-items: center; gap: clamp(22px, 4vw, 56px); width: 100%; max-width: 1180px; margin: 0 auto; padding: clamp(16px, 3vw, 34px) clamp(18px, 5vw, 46px) clamp(40px, 6vw, 74px); }
+.not-found-copy { min-width: 0; }
+.not-found-copy h1 { margin: 0 0 16px; color: #143e39; font-size: clamp(30px, 4.6vw, 52px); line-height: 1.22; letter-spacing: -.04em; }
+.not-found-lead { max-width: 620px; margin: 0; color: #54716a; font-size: clamp(13.5px, 1.5vw, 16px); line-height: 2.05; }
+
+.not-found-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 26px; }
+.not-found-actions .primary-button,
+.not-found-actions .secondary-button { min-height: 48px; padding: 0 22px; border-radius: 14px; font-size: 12.5px; }
+.not-found-actions .not-found-back { box-shadow: 0 20px 38px rgba(19, 86, 80, .22); }
+.not-found-actions .not-found-back:hover { transform: translateY(-2px); }
+.not-found-arrow { font-size: 15px; font-weight: 700; line-height: 1; }
+
+.not-found-address { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 22px; padding: 11px 15px; border: 1px dashed rgba(23, 125, 103, .32); border-radius: 14px; background: rgba(255, 255, 255, .72); }
+.not-found-address span { color: #6b8880; font-size: 10px; font-weight: 800; white-space: nowrap; }
+.not-found-address code { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #1d5b52; font-family: 'Vazirmatn', Tahoma, sans-serif; font-size: 11px; direction: ltr; }
+
+.not-found-shortcuts { margin-top: 24px; }
+.not-found-shortcuts-title { display: block; margin-bottom: 10px; color: #6f8b84; font-size: 10.5px; font-weight: 700; }
+.not-found-shortcuts-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.not-found-shortcut { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 0 13px; border: 1px solid #dbe9e4; border-radius: 12px; background: rgba(255, 255, 255, .88); color: #245148; font-size: 11px; font-weight: 700; text-decoration: none; box-shadow: 0 8px 18px rgba(15, 74, 63, .04); }
+.not-found-shortcut span { color: #1c8a72; font-size: 14px; }
+.not-found-shortcut:hover { border-color: #6fbca8; background: #f0faf6; color: #17705e; transform: translateY(-1px); }
+
+.not-found-art { display: grid; place-items: center; }
+.not-found-art svg { display: block; width: min(100%, 386px); height: auto; filter: drop-shadow(0 28px 46px rgba(15, 94, 80, .16)); animation: not-found-float 7.5s ease-in-out infinite; }
+@keyframes not-found-float { 0%, 100% { transform: translate3d(0, 0, 0) rotate(-1.2deg); } 50% { transform: translate3d(0, -14px, 0) rotate(1.2deg); } }
+
+.not-found-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; width: 100%; max-width: 1180px; margin: 0 auto; padding: 16px clamp(18px, 5vw, 46px) 28px; border-top: 1px solid rgba(30, 99, 85, .12); color: #748c85; font-size: 10px; }
+
+@media (max-width: 900px) {
+  .not-found-body { grid-template-columns: 1fr; text-align: center; }
+  .not-found-lead { margin-inline: auto; }
+  .not-found-actions,
+  .not-found-shortcuts-grid { justify-content: center; }
+  .not-found-address { justify-content: center; }
+  .not-found-art { order: -1; }
+  .not-found-art svg { width: min(78%, 290px); }
+  .not-found-footer { justify-content: center; text-align: center; }
+}
+
+/* کاربرانی که حرکتِ کم را ترجیح می‌دهند، انیمیشنِ اضافه نمی‌بینند */
+@media (prefers-reduced-motion: reduce) {
+  .not-found-aurora span,
+  .not-found-art svg { animation: none; }
+  .not-found-actions .not-found-back:hover { transform: none; }
+}

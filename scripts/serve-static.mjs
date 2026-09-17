@@ -34,7 +34,13 @@ createServer((request, response) => {
   let file = join(root, safe);
   if (!file.startsWith(root)) { response.writeHead(403).end('ممنوع'); return; }
   if (existsSync(file) && statSync(file).isDirectory()) file = join(file, 'index.html');
-  if (!existsSync(file)) file = join(root, 'index.html');
+  let status = 200;
+  if (!existsSync(file)) {
+    // نشانیِ ناشناس: صفحه‌ی «پیدا نشد» با کدِ وضعیتِ واقعیِ ۴۰۴
+    const notFound = join(root, '404.html');
+    file = existsSync(notFound) ? notFound : join(root, 'index.html');
+    status = 404;
+  }
   if (!existsSync(file)) { response.writeHead(404).end('یافت نشد'); return; }
 
   const extension = extname(file);
@@ -47,7 +53,7 @@ createServer((request, response) => {
     'Cache-Control': 'no-cache',
   };
   // درخواستِ HEAD: برنامه‌های دانلود نخست آن را می‌فرستند تا اندازه را بفهمند
-  if (request.method === 'HEAD') { response.writeHead(200, headers).end(); return; }
+  if (request.method === 'HEAD') { response.writeHead(status, headers).end(); return; }
 
   const range = /^bytes=(\d*)-(\d*)$/.exec(String(request.headers.range ?? '').trim());
   if (range) {
@@ -64,6 +70,6 @@ createServer((request, response) => {
     return;
   }
 
-  response.writeHead(200, headers);
+  response.writeHead(status, headers);
   createReadStream(file).pipe(response);
 }).listen(port, '0.0.0.0', () => console.log(`نسخه‌ی نمایشی روی http://0.0.0.0:${port} آماده است (پوشه: ${root})`));

@@ -21,6 +21,13 @@ check('خروجیِ نسخه‌ی نمایشی ساخته شده است', exists
 check('فایل 404.html برای Pages وجود دارد', existsSync(`${outDir}/404.html`));
 check('فایل .nojekyll وجود دارد', existsSync(`${outDir}/.nojekyll`));
 
+// صفحه‌ی ۴۰۴ باید یک صفحه‌ی واقعیِ «پیدا نشد» باشد، نه کپیِ index.html
+// (روی هاستِ ایستا، نشانی‌های ناشناس همین فایل را با کدِ ۴۰۴ می‌گیرند)
+const notFoundPage = existsSync(`${outDir}/404.html`) ? readFileSync(`${outDir}/404.html`, 'utf8') : '';
+check('صفحه‌ی ۴۰۴ فارسی و دارای دکمه‌ی بازگشت است', notFoundPage.includes('صفحه پیدا نشد') && notFoundPage.includes('not-found-back'));
+check('صفحه‌ی ۴۰۴ خودبسنده است (به دارایی‌های نسبی وابسته نیست)', notFoundPage.length > 0 && !/\.\/assets\//.test(notFoundPage));
+check('فونتِ وزیرمتن درونِ صفحه‌ی ۴۰۴ جا گرفته است (مانند بقیه‌ی صفحه‌ها)', notFoundPage.includes("font-family:'Vazirmatn'") && notFoundPage.includes('data:font/woff2;base64,'));
+
 const rawHtml = readFileSync(`${outDir}/index.html`, 'utf8');
 const html = rawHtml.replace(/<script type="module"[^>]*><\/script>/g, '');
 const asset = rawHtml.match(/assets\/(index-[\w-]+\.js)/)[1];

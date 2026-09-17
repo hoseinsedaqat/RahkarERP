@@ -317,11 +317,9 @@ const serveStaticFile = (request: IncomingMessage, result: ServerResponse, urlPa
   const requested = normalize(decodeURIComponent(urlPath.split('?')[0])).replace(/^(\.\.[/\\])+/, '');
   let filePath = join(distDirectory, requested);
   if (!filePath.startsWith(distDirectory)) return false;
-  if (!existsSync(filePath) || statSync(filePath).isDirectory()) {
-    // فقط مسیرهای بدون پسوند (مسیرهای SPA) به index.html هدایت می‌شوند؛ فایل‌های مفقود 404 می‌گیرند
-    if (extname(filePath)) return false;
-    filePath = join(distDirectory, 'index.html');
-  }
+  // پوشه‌ها با index.html خودشان سرو می‌شوند (ریشه‌ی برنامه هم پوشه است)
+  if (existsSync(filePath) && statSync(filePath).isDirectory()) filePath = join(filePath, 'index.html');
+  // فایل یا مسیرِ مفقود: پاسخِ ۴۰۴ در «serveNotFoundPage» ساخته می‌شود
   if (!existsSync(filePath)) return false;
 
   const extension = extname(filePath);
@@ -367,6 +365,36 @@ const serveStaticFile = (request: IncomingMessage, result: ServerResponse, urlPa
   return true;
 };
 
+/**
+ * پاسخِ نشانی‌های ناشناس: صفحه‌ی «پیدا نشد» با کدِ وضعیتِ واقعیِ ۴۰۴.
+ * - اگر خروجیِ ساخت صفحه‌ی مستقلِ 404.html را داشته باشد، همان فرستاده می‌شود
+ *   (خودبسنده است و به داراییِ دیگری نیاز ندارد).
+ * - وگرنه پوسته‌ی برنامه فرستاده می‌شود تا خودش صفحه‌ی ۴۰۴ را رسم کند؛ چون در
+ *   نشانی‌های تودرتو مسیرهای نسبیِ دارایی‌ها می‌شکنند، یک <base href="/"> به سند
+ *   افزوده می‌شود تا برنامه درست بالا بیاید.
+ */
+const serveNotFoundPage = (request: IncomingMessage, result: ServerResponse): boolean => {
+  const notFoundFile = join(distDirectory, '404.html');
+  const indexFile = join(distDirectory, 'index.html');
+  const isHead = request.method === 'HEAD';
+  const baseHeaders = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' };
+  if (existsSync(notFoundFile)) {
+    const stats = statSync(notFoundFile);
+    result.writeHead(404, { ...baseHeaders, 'Content-Length': String(stats.size) });
+    if (isHead) { result.end(); return true; }
+    createReadStream(notFoundFile).pipe(result);
+    return true;
+  }
+  if (!existsSync(indexFile)) return false;
+  let html = readFileSync(indexFile, 'utf8');
+  if (!/<base\s/i.test(html)) html = html.replace(/<head([^>]*)>/i, '<head$1><base href="/" />');
+  const body = Buffer.from(html, 'utf8');
+  result.writeHead(404, { ...baseHeaders, 'Content-Length': String(body.byteLength) });
+  if (isHead) { result.end(); return true; }
+  result.end(body);
+  return true;
+};
+
 /* ----------------------------------- مسیرها ----------------------------------- */
 
 const server = createServer((request: IncomingMessage, result: ServerResponse) => {
@@ -376,6 +404,8 @@ const server = createServer((request: IncomingMessage, result: ServerResponse) =
   const url = new URL(request.url ?? '/', `http://${request.headers.host ?? 'localhost'}`);
   const path = url.pathname;
   if (serveStatic && !path.startsWith('/api/') && serveStaticFile(request, result, url.pathname + url.search)) return;
+  // فایل یا مسیرِ ناشناس: صفحه‌ی ۴۰۴ با کدِ وضعیتِ ۴۰۴ (پیش از رسیدن به مسیرهای API)
+  if (serveStatic && !path.startsWith('/api/') && serveNotFoundPage(request, result)) return;
 
   const route = async (): Promise<void> => {
     if (path === '/api/health') {

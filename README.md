@@ -16,6 +16,7 @@
 [![Vite](https://img.shields.io/badge/Vite-7-646cff?style=flat-square&logo=vite&logoColor=white)](#-معماری-فنی)
 [![ماژول‌ها](https://img.shields.io/badge/ماژول-۱۶-1c7a6d?style=flat-square)](#-ماژولها)
 [![API](https://img.shields.io/badge/API-۷۸_مسیر-00599c?style=flat-square)](#-api)
+[![CI](https://github.com/h03einsedaqat/erpv2/actions/workflows/ci.yml/badge.svg)](https://github.com/h03einsedaqat/erpv2/actions/workflows/ci.yml)
 [![تست](https://img.shields.io/badge/تست-۲۹_واحد_%2B_۱۹_سناریوی_e2e-2ea44f?style=flat-square)](#-تست-و-کیفیت)
 [![لایسنس](https://img.shields.io/badge/لایسنس-MIT-blueviolet?style=flat-square)](LICENSE)
 [![هزینه](https://img.shields.io/badge/هزینه-کاملاً_رایگان-brightgreen?style=flat-square)](#-وضعیت-حقوقی-و-لایسنس)
@@ -108,7 +109,8 @@
 | نصب به‌عنوان برنامه | PWA با Service Worker (دسکتاپ و موبایل، کار آفلاین) |
 | امنیت | JWT با چرخش توکن تازه‌سازی، هش scrypt، RBAC با ۵ نقش، لاگ حسابرسی، محدودسازی نرخ، هدرهای امنیتی |
 | پشتیبان‌گیری | دستی + خودکار دوره‌ای + بازگردانی از رابط کاربری |
-| تست | بررسی نوع (`tsc`)، ۲۹ تست واحد، ۱۹ سناریوی end-to-end |
+| مسیریابی | مسیرهای ناشناس → صفحه‌ی اختصاصیِ «۴۰۴» با دکمه‌ی «بازگشت به صفحه‌ی قبل» (کدِ وضعیتِ ۴۰۴ روی سرور و فایلِ مستقلِ `404.html` روی هاستِ ایستا) |
+| تست | بررسی نوع (`tsc`)، ۲۹ تست واحد، ۲۱ سناریوی end-to-end |
 
 ---
 
@@ -144,8 +146,8 @@
 
 ```bash
 # ۱) کد را بگیرید
-git clone https://github.com/hoseinsedaqat/RahkarERP.git
-cd RahkarERP
+git clone https://github.com/h03einsedaqat/erpv2.git
+cd erpv2
 
 # ۲) وابستگی‌ها را نصب کنید
 npm install
@@ -972,7 +974,9 @@ DATABASE_URL=postgres://postgres:postgres@localhost:5432/aria npm run migrate
 | Build command | `npm run build:demo` |
 | Publish directory | `dist` |
 
-`npm run build:demo` این کارها را می‌کند: `tsc --noEmit` (بررسی نوع) ← ساخت Vite با `VITE_DEMO=true` و `BASE_PATH=./` ← افزودن `.nojekyll` و `404.html` (برای سازگاری با میزبان‌های استاتیک و مسیریابی SPA).
+`npm run build:demo` این کارها را می‌کند: `tsc --noEmit` (بررسی نوع) ← ساخت Vite با `VITE_DEMO=true` و `BASE_PATH=./` ← آماده‌سازیِ انتشار با `scripts/prepare-pages.mjs`:
+افزودن `.nojekyll` و ساختنِ `404.html` از قالبِ `scripts/templates/404.html`. این قالب **خودبسنده** است (CSS، تصویر و فونتِ وزیرمتن با همان وزن‌های بقیه‌ی صفحه‌ها درونِ خودش)
+تا در هر عمقی از نشانی — مثل `example.com/repo/a/b/` — هم بدون داراییِ نسبی درست نمایش داده شود.
 
 برای نسخه‌ی محلی همان خروجی:
 
@@ -984,6 +988,19 @@ node scripts/serve-static.mjs dist-demo 8081
 ```
 
 </div>
+
+### صفحه‌ی «پیدا نشد» (۴۰۴)
+
+نشانی‌ای که در برنامه وجود ندارد، سه لایه پوشش داده می‌شود:
+
+| لایه | چه اتفاقی می‌افتد |
+| --- | --- |
+| هاستِ ایستا (GitHub Pages / Netlify) | فایلِ `404.html` با کدِ ۴۰۴ سرو می‌شود: صفحه‌ی فارسیِ «صفحه پیدا نشد» با فونتِ وزیرمتن، دکمه‌ی «بازگشت به صفحه‌ی قبل»، نشانیِ درخواستی و میان‌برِ ورود/معرفی ماژول‌ها |
+| سرورِ Node (`npm start` / Docker) | اگر `404.html` در خروجیِ ساخت باشد همان سرو می‌شود؛ وگرنه پوسته‌ی برنامه با کدِ ۴۰۴ و یک `<base href="/">` فرستاده می‌شود تا دارایی‌های نسبی در نشانی‌های تودرتو نشکنند |
+| درونِ برنامه (هشِ نامعتبر) | مسیرهای نامعتبرِ درون‌برنامه‌ای (مثل `#/dashbord` یا `#modules/ناشناس`) صفحه‌ی ۴۰۴ را با میان‌برِ ماژول‌های همان کاربر رسم می‌کنند؛ نشست و داده‌ها دست‌نخورده می‌مانند |
+
+مسیرهای واقعی (ریشه، `#login`، بخش‌های صفحه‌ی اصلی و `#modules/<id>`) هرگز ۴۰۴ نمی‌شوند؛ این رفتار در
+`tests/e2e/not-found.mjs` و `tests/e2e/not-found-server.mjs` بررسی می‌شود.
 
 ### میزبانی واقعی (چندنفره، با سرور)
 
@@ -1019,7 +1036,7 @@ node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 ```bash
 npm run typecheck     # بررسی نوع TypeScript (بدون خطا)
 npm run test:unit     # ۲۹ تست واحد در ۳ فایل (Vitest)
-npm run test:e2e      # ۱۹ سناریوی end-to-end (نیازمند سرور در حال اجرا روی پورت ۸۰۸۰)
+npm run test:e2e      # ۲۱ سناریوی end-to-end (نیازمند سرور در حال اجرا روی پورت ۸۰۸۰)
 npm test              # typecheck + unit + e2e
 ```
 
@@ -1028,7 +1045,7 @@ npm test              # typecheck + unit + e2e
 | دسته | پوشش |
 | --- | --- |
 | تست واحد | موتورهای محاسباتی (صدور سند، تراز، استهلاک، حقوق، بودجه، گزارش) · منطق توکن دسترسی و تازه‌سازی · موارد امنیتی (هش رمز، هدرها، پاک‌سازی ورودی) |
-| تست end-to-end | ورود و نشست (پایداری، بازیابی، دوام) · فرم‌ها و مودال‌ها · چاپ · گزارش‌گیری · تبادل داده · پایداری سرور · حالت آفلاین و نسخه‌ی نمایشی · چرخه‌ی وضعیت اتصال · رفع باگ‌های گذشته |
+| تست end-to-end | ورود و نشست (پایداری، بازیابی، دوام) · فرم‌ها و مودال‌ها · چاپ · گزارش‌گیری · تبادل داده · پایداری سرور · حالت آفلاین و نسخه‌ی نمایشی · چرخه‌ی وضعیت اتصال · صفحه‌ی ۴۰۴ (سمتِ مرورگر و کدِ وضعیتِ سرور) · رفع باگ‌های گذشته |
 
 برای اجرای تست end-to-end، ابتدا سرور را بالا بیاورید:
 
@@ -1041,7 +1058,7 @@ npm run test:e2e           # در ترمینال دیگر
 
 </div>
 
-> 📌 وضعیت فعلی مخزن: `tsc --noEmit` بدون خطا · ۲۹/۲۹ تست واحد موفق · ۱۹/۱۹ سناریوی end-to-end موفق
+> 📌 وضعیت فعلی مخزن: `tsc --noEmit` بدون خطا · ۲۹/۲۹ تست واحد موفق · ۲۱/۲۱ سناریوی end-to-end موفق
 > (سناریوی `demo-offline.mjs` نیازمند اجرای `npm run build:demo:local` پیش از تست است).
 
 ---
@@ -1051,7 +1068,7 @@ npm run test:e2e           # در ترمینال دیگر
 <div dir="ltr">
 
 ```
-RahkarERP/
+erpv2/
 ├── index.html                  # پوسته‌ی HTML برنامه (فارسی، راست‌چین، متاتگ‌های PWA)
 ├── package.json                # اسکریپت‌ها و وابستگی‌ها (Node ≥ 20.19)
 ├── vite.config.ts              # پیکربندی ساخت و پروکسی /api در حالت توسعه
@@ -1060,7 +1077,7 @@ RahkarERP/
 ├── Dockerfile                  # تصویر چندمرحله‌ای با HEALTHCHECK
 ├── docker-compose.yml          # اجرای یک‌دستگانی (+ PostgreSQL اختیاری)
 ├── LICENSE                     # لایسنس MIT
-├── .github/workflows/ci.yml    # CI: typecheck + build + تست واحد + ۱۹ سناریوی e2e
+├── .github/workflows/ci.yml    # CI: typecheck + build + تست واحد + ۲۱ سناریوی e2e
 │
 ├── src/                        # ── رابط کاربری ──
 │   ├── main.ts                 # کل SPA: ۱۶ ماژول، داشبورد، فرم‌ها، نمودارها، چاپ (۶٬۴۸۱ خط)
@@ -1091,8 +1108,9 @@ RahkarERP/
 ├── docs/                       # مستندات فارسی (نصب، کاربر، امنیت، مودیان، نقشه‌ی راه…)
 ├── public/                     # manifest، Service Worker و آیکون‌های PWA
 ├── scripts/                    # اسکریپت‌های ساخت، اجرا، بسته‌بندی ویندوز و گردآوری کد
+│   └── templates/404.html      # قالبِ مستقلِ صفحه‌ی «پیدا نشد» برای هاستِ ایستا
 ├── tests/unit/                 # تست‌های واحد (Vitest)
-└── tests/e2e/                  # ۱۹ سناریوی end-to-end (jsdom)
+└── tests/e2e/                  # ۲۱ سناریوی end-to-end (jsdom)
 ```
 
 </div>

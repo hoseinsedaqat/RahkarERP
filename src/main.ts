@@ -1030,6 +1030,8 @@ function loginRouteHref(): string {
 }
 
 function render(): void {
+  // نشانیِ ناموجود هیچ‌وقت صفحه‌ی دلخواه نشان نمی‌دهد؛ صفحه‌ی ۴۰۴ رسم می‌شود
+  if (!isKnownRoute()) { renderNotFound(); return; }
   if (!session) {
     if (preferLoginScreen || isLoginRoute()) renderLogin();
     else {
@@ -1048,6 +1050,7 @@ function render(): void {
     if (fallback && (session?.permissions?.length ?? 0) > 0) activeModule = fallback.id;
   }
   const current = currentModule();
+  document.title = `${current.label} | راهکار`;
   // پیش از بازسازی، جایگاهِ فیلدِ فعال را به خاطر می‌سپاریم تا تمرکزِ کاربر از بین نرود
   const focused = document.activeElement as HTMLElement | null;
   const focusSelector = focused && ['INPUT', 'TEXTAREA', 'SELECT'].includes(focused.tagName)
@@ -1451,6 +1454,7 @@ function renderModuleGuide(moduleId: string): void {
   const module = moduleData.find((item) => item.id === moduleId);
   const guide = moduleGuides[moduleId];
   if (!app || !module || !guide) { renderLanding(); return; }
+  document.title = `${module.label} | راهکار`;
   preferLoginScreen = false;
   closeAllModals();
   const related = moduleData.filter((item) => item.id !== moduleId).slice(0, 4);
@@ -1481,14 +1485,203 @@ function renderModuleGuide(moduleId: string): void {
   );
 }
 
-/** مسیرهای عمومی (راهنمای ماژول و ورود) بدون وابستگی به listener دکمه رندر می‌شوند. */
-function renderPublicRoute(): void {
-  if (session) return;
-  preferLoginScreen = isLoginRoute();
+/* ============================================================
+   مسیرهای برنامه و صفحه‌ی «پیدا نشد» (۴۰۴)
+   ------------------------------------------------------------
+   راهکار یک سامانه‌ی تک‌صفحه‌ای است؛ بنابراین اگر کاربر نشانی‌ای را باز کند
+   که در برنامه وجود ندارد (مسیرِ ناشناس یا هشِ نامعتبر)، نشان‌دادنِ صفحه‌ی خانه
+   گمراه‌کننده است. این بخش مسیرِ جاری را می‌سنجد و در صورتِ نبودنِ صفحه،
+   صفحه‌ی ۴۰۴ با دکمه‌ی «بازگشت به صفحه‌ی قبل» را نمایش می‌دهد.
+   ============================================================ */
+
+/** یکسان‌سازیِ مسیر: بدونِ query و hash و بدونِ اسلشِ پایانیِ اضافه */
+function normalizePathname(value: string): string {
+  let path = String(value || '/').split('#')[0].split('?')[0];
+  path = path.replace(/\/{2,}/g, '/').replace(/\/index\.html?$/i, '/');
+  if (!path.startsWith('/')) path = `/${path}`;
+  if (path.length > 1) path = path.replace(/\/+$/, '');
+  return path || '/';
+}
+
+/**
+ * ریشه‌ی برنامه؛ یعنی نشانی‌ای که index.html از آن سرو می‌شود.
+ * - ساختِ مطلق: مقدارِ BASE_URL همان ریشه است.
+ * - ساختِ نسبی (خروجیِ GitHub Pages): مسیرِ خودِ فایلِ برنامه مرجع است و چون آن
+ *   فایل در پوشه‌ی دارایی‌ها (assets/) ساخته می‌شود، یک پله بالاتر ریشه‌ی برنامه است.
+ * - اگر هیچ نشانه‌ای در دست نبود (مثلاً اجرای برنامه درونِ ابزارِ آزمون)،
+ *   ریشه‌ی دامنه در نظر گرفته می‌شود که حالتِ رایجِ استقرار است.
+ */
+function appRootPath(): string {
+  const base = String(import.meta.env.BASE_URL ?? '/');
+  if (base.startsWith('/')) return normalizePathname(base);
+  const script = document.querySelector<HTMLScriptElement>('script[type="module"][src]');
+  if (script?.src) {
+    const assetDirectory = normalizePathname(new URL(script.src).pathname.replace(/\/[^/]*$/, '/'));
+    return normalizePathname(assetDirectory.replace(/\/?assets\/?$/, '/'));
+  }
+  return '/';
+}
+
+/** نشانیِ خانه برای لینک‌ها (ریشه‌ی برنامه با اسلشِ پایانی) */
+function appRootHref(): string {
+  const root = appRootPath();
+  return root === '/' ? '/' : `${root}/`;
+}
+
+/** بخش‌های صفحه‌ی اصلی که پیوندِ عمیق به آن‌ها معتبر است (مثل /#pricing) */
+const LANDING_ANCHORS = ['#features', '#modules', '#pricing', '#contact'];
+
+/** آیا نشانیِ جاری به یکی از صفحه‌های واقعیِ برنامه اشاره می‌کند؟ */
+function isKnownRoute(): boolean {
+  if (normalizePathname(window.location.pathname) !== appRootPath()) return false;
+  const hash = window.location.hash.toLowerCase();
+  if (hash === '' || hash === '#' || hash === '#!') return true;
+  if (hash === '#login' || hash === '#home' || hash === '#landing') return true;
+  if (LANDING_ANCHORS.includes(hash)) return true;
+  return moduleGuideIdFromLocation() !== null;
+}
+
+/** نشانیِ کاملِ جاری (برای نمایش در ۴۰۴ و تشخیصِ تغییرِ مسیر) */
+function currentAddress(): string {
+  return `${window.location.pathname}${window.location.search}${window.location.hash}`;
+}
+
+/** جایگزینیِ نشانیِ جاری بدونِ بارگذاریِ دوباره‌ی صفحه */
+function replaceAddress(target: string): void {
+  try { window.history.replaceState({ route: target }, '', target); }
+  catch { window.location.assign(target); }
+}
+
+/** رفتن به صفحه‌ی خانه‌ی برنامه */
+function gotoHome(): void {
+  replaceAddress(`${appRootHref()}${window.location.search}`);
   render();
 }
-window.addEventListener('popstate', renderPublicRoute);
-window.addEventListener('hashchange', renderPublicRoute);
+
+/**
+ * بازگشت به صفحه‌ی قبل.
+ * اگر مرورگر تاریخچه‌ای نداشته باشد (کاربر نشانیِ ناموجود را مستقیم باز کرده
+ * و صفحه‌ی قبلی‌ای وجود ندارد)، به‌جای بی‌واکنش ماندن، به صفحه‌ی خانه می‌رود.
+ */
+function goBackOrHome(): void {
+  const before = currentAddress();
+  if (window.history.length > 1) {
+    window.history.back();
+    window.setTimeout(() => { if (currentAddress() === before && !isKnownRoute()) gotoHome(); }, 400);
+    return;
+  }
+  gotoHome();
+}
+
+/** تصویرِ صفحه‌ی ۴۰۴ (SVG درون‌خطی تا به فایلِ اضافه نیاز نباشد) */
+function notFoundArtMarkup(): string {
+  return `<div class="not-found-art" aria-hidden="true">
+    <svg viewBox="0 0 340 340">
+      <defs>
+        <linearGradient id="nf-shell" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#def5ec"/><stop offset="1" stop-color="#bce7d8"/></linearGradient>
+        <linearGradient id="nf-lens" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffdcb4"/><stop offset="1" stop-color="#e3a05c"/></linearGradient>
+      </defs>
+      <rect x="16" y="16" width="308" height="308" rx="104" fill="url(#nf-shell)"/>
+      <rect x="84" y="62" width="142" height="180" rx="22" fill="#ffffff" stroke="#d2e9e0" stroke-width="2"/>
+      <rect x="110" y="96" width="90" height="10" rx="5" fill="#e3f2ec"/>
+      <rect x="110" y="122" width="62" height="10" rx="5" fill="#e3f2ec"/>
+      <rect x="110" y="148" width="76" height="10" rx="5" fill="#e3f2ec"/>
+      <rect x="110" y="174" width="48" height="10" rx="5" fill="#eef5f2"/>
+      <rect x="110" y="200" width="70" height="10" rx="5" fill="#f6ead9"/>
+      <circle cx="198" cy="206" r="64" fill="url(#nf-lens)" opacity=".95"/>
+      <circle cx="198" cy="206" r="64" fill="none" stroke="#0f5f6c" stroke-width="10"/>
+      <line x1="244" y1="252" x2="288" y2="296" stroke="#0f5f6c" stroke-width="18" stroke-linecap="round"/>
+      <text x="198" y="230" text-anchor="middle" font-size="60" font-weight="800" fill="#ffffff" font-family="Vazirmatn, Tahoma, sans-serif">؟</text>
+      <circle cx="80" cy="272" r="9" fill="#e5ab62"/>
+      <circle cx="276" cy="88" r="7" fill="#22957b"/>
+      <circle cx="62" cy="120" r="5" fill="#8fcbb8"/>
+    </svg>
+  </div>`;
+}
+
+/** میان‌برهای صفحه‌ی ۴۰۴: برای کاربرِ واردشده ماژول‌ها، برای مهمان ورود و معرفی */
+function notFoundShortcutsMarkup(): string {
+  if (session) {
+    const shortcuts = visibleModules().slice(1, 6)
+      .map((item) => `<button type="button" class="not-found-shortcut" data-not-found-module="${item.id}"><span>${item.icon}</span>${escapeHtml(item.label)}</button>`).join('');
+    return `<div class="not-found-shortcuts">
+      <span class="not-found-shortcuts-title">شاید دنبال یکی از این بخش‌ها بودید</span>
+      <div class="not-found-shortcuts-grid">
+        <button type="button" class="not-found-shortcut" data-not-found-module="overview"><span>◈</span>نمای کلی</button>
+        ${shortcuts}
+      </div>
+    </div>`;
+  }
+  return `<div class="not-found-shortcuts">
+    <span class="not-found-shortcuts-title">شاید یکی از این‌ها کمکتان کند</span>
+    <div class="not-found-shortcuts-grid">
+      <a class="not-found-shortcut" id="not-found-login" href="${appRootHref()}?login=1#login"><span>⌁</span>ورود به سامانه</a>
+      <button type="button" class="not-found-shortcut" id="not-found-modules"><span>▤</span>آشنایی با ماژول‌ها</button>
+    </div>
+  </div>`;
+}
+
+/** صفحه‌ی «پیدا نشد» (۴۰۴) با دکمه‌ی بازگشت به صفحه‌ی قبل */
+function renderNotFound(): void {
+  const app = document.querySelector<HTMLDivElement>('#app');
+  if (!app) return;
+  preferLoginScreen = false;
+  closeAllModals();
+  document.title = 'صفحه پیدا نشد (۴۰۴) | راهکار';
+  const address = currentAddress();
+  const shown = address.length > 90 ? `${address.slice(0, 90)}…` : address;
+  app.innerHTML = `<main class="not-found-page">
+    <div class="not-found-aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+
+    <header class="not-found-nav">
+      <button type="button" class="guide-brand" id="not-found-brand"><span class="brand-mark">ر</span><span>راهکار</span></button>
+      <span class="not-found-chip"><i>۴۰۴</i> صفحه پیدا نشد</span>
+    </header>
+
+    <section class="not-found-body">
+      <div class="not-found-copy">
+        <p class="eyebrow">خطای ۴۰۴ · نشانیِ ناشناس</p>
+        <h1>این صفحه در راهکار وجود ندارد</h1>
+        <p class="not-found-lead">نشانی‌ای که باز کردید پاک شده، جابه‌جا شده یا هیچ‌وقت وجود نداشته است. داده‌های شما سرِ جای خودشان محفوظ‌اند؛ با یک کلیک به همان‌جایی که بودید برمی‌گردید.</p>
+        <div class="not-found-actions">
+          <button type="button" class="primary-button not-found-back" id="not-found-back">بازگشت به صفحه‌ی قبل <b class="not-found-arrow" aria-hidden="true">→</b></button>
+          <button type="button" class="secondary-button" id="not-found-home">صفحه‌ی اصلی</button>
+        </div>
+        <div class="not-found-address" role="status"><span>نشانیِ درخواستی</span><code dir="ltr">${escapeHtml(shown)}</code></div>
+        ${notFoundShortcutsMarkup()}
+      </div>
+      ${notFoundArtMarkup()}
+    </section>
+
+    <footer class="not-found-footer">
+      <span>راهکار · سیستم یکپارچه برنامه‌ریزی سازمان</span>
+      <span>اگر این صفحه باید وجود داشته باشد، به مدیر سیستم اطلاع دهید.</span>
+    </footer>
+  </main>`;
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  document.querySelector<HTMLButtonElement>('#not-found-back')?.addEventListener('click', goBackOrHome);
+  document.querySelector<HTMLButtonElement>('#not-found-home')?.addEventListener('click', gotoHome);
+  document.querySelector<HTMLButtonElement>('#not-found-brand')?.addEventListener('click', gotoHome);
+  document.querySelectorAll<HTMLButtonElement>('[data-not-found-module]').forEach((button) =>
+    button.addEventListener('click', () => {
+      replaceAddress(appRootHref());
+      gotoModule(button.dataset.notFoundModule ?? 'overview');
+    }),
+  );
+  document.querySelector<HTMLButtonElement>('#not-found-modules')?.addEventListener('click', () => {
+    gotoHome();
+    window.setTimeout(() => document.getElementById('modules')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+  });
+}
+
+/** با هر تغییرِ مسیر (دکمه‌ی بازگشت/جلوی مرورگر یا لینکِ داخلی) صفحه از نو رسم می‌شود */
+function handleRouteChange(): void {
+  if (!isKnownRoute()) { renderNotFound(); return; }
+  if (!session) preferLoginScreen = isLoginRoute();
+  render();
+}
+window.addEventListener('popstate', handleRouteChange);
+window.addEventListener('hashchange', handleRouteChange);
 
 function cashBalanceChartMarkup(): string {
   const ordered = [...treasuryTransactions].sort((a, b) => {
@@ -1521,6 +1714,7 @@ function cashBalanceChartMarkup(): string {
 function renderLanding(): void {
   const app = document.querySelector<HTMLDivElement>('#app');
   if (!app) return;
+  document.title = 'راهکار | سیستم یکپارچه برنامه‌ریزی سازمان';
   preferLoginScreen = false;
   closeAllModals();
   const plans = [
@@ -1749,6 +1943,9 @@ function renderLanding(): void {
 
   const scrollTo = (id: string) => document.querySelector(`#${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   document.querySelectorAll<HTMLButtonElement>('[data-scroll]').forEach((button) => button.addEventListener('click', () => scrollTo(button.dataset.scroll ?? 'features')));
+  // پیوندِ عمیق به بخش‌های همین صفحه (مثل /#pricing) هم باید به همان بخش برود
+  const deepLink = window.location.hash.toLowerCase();
+  if (LANDING_ANCHORS.includes(deepLink)) window.setTimeout(() => scrollTo(deepLink.slice(1)), 60);
   // ظاهر شدنِ تدریجیِ بخش‌ها هنگامِ اسکرول
   setupScrollReveal();
   document.querySelector<HTMLButtonElement>('#landing-login')?.addEventListener('click', renderLogin);
@@ -1764,6 +1961,7 @@ function renderLanding(): void {
 function renderLogin(): void {
   const app = document.querySelector<HTMLDivElement>('#app');
   if (!app) return;
+  document.title = 'ورود به سامانه | راهکار';
   closeAllModals();
   const quickAccounts = [
     { username: 'admin', password: 'admin123', title: 'مدیر سیستم', note: 'دسترسی کامل' },
