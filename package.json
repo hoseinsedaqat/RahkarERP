@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "concurrently -n api,web -c cyan,magenta \"npm:server\" \"npm:client\"",
     "build": "tsc --noEmit && vite build",
+    "postbuild": "node scripts/prepare-pages.mjs dist",
     "server": "tsx server/index.ts",
     "client": "vite",
     "serve": "tsx server/index.ts",
