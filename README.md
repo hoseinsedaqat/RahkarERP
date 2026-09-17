@@ -16,7 +16,6 @@
 [![Vite](https://img.shields.io/badge/Vite-7-646cff?style=flat-square&logo=vite&logoColor=white)](#-معماری-فنی)
 [![ماژول‌ها](https://img.shields.io/badge/ماژول-۱۶-1c7a6d?style=flat-square)](#-ماژولها)
 [![API](https://img.shields.io/badge/API-۷۸_مسیر-00599c?style=flat-square)](#-api)
-[![CI](https://github.com/h03einsedaqat/erpv2/actions/workflows/ci.yml/badge.svg)](https://github.com/h03einsedaqat/erpv2/actions/workflows/ci.yml)
 [![تست](https://img.shields.io/badge/تست-۲۹_واحد_%2B_۱۹_سناریوی_e2e-2ea44f?style=flat-square)](#-تست-و-کیفیت)
 [![لایسنس](https://img.shields.io/badge/لایسنس-MIT-blueviolet?style=flat-square)](LICENSE)
 [![هزینه](https://img.shields.io/badge/هزینه-کاملاً_رایگان-brightgreen?style=flat-square)](#-وضعیت-حقوقی-و-لایسنس)
@@ -146,8 +145,8 @@
 
 ```bash
 # ۱) کد را بگیرید
-git clone https://github.com/h03einsedaqat/erpv2.git
-cd erpv2
+git clone https://github.com/hoseinsedaqat/RahkarERP.git
+cd RahkarERP
 
 # ۲) وابستگی‌ها را نصب کنید
 npm install
@@ -1068,7 +1067,7 @@ npm run test:e2e           # در ترمینال دیگر
 <div dir="ltr">
 
 ```
-erpv2/
+RahkarERP/
 ├── index.html                  # پوسته‌ی HTML برنامه (فارسی، راست‌چین، متاتگ‌های PWA)
 ├── package.json                # اسکریپت‌ها و وابستگی‌ها (Node ≥ 20.19)
 ├── vite.config.ts              # پیکربندی ساخت و پروکسی /api در حالت توسعه
